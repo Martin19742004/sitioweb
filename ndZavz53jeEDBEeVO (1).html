@@ -1,0 +1,721 @@
+<html><head><base href="https://websim.example.com/vidshare/"><meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><title>VidShare - Comparte y descubre videos increíbles</title><style>
+    :root {
+        --primary-color: #1a73e8;
+        --secondary-color: #ea4335;
+        --background-color: #f9f9f9;
+        --text-color: #202124;
+        --border-color: #dadce0;
+    }
+
+    body {
+        font-family: 'Roboto', Arial, sans-serif;
+        margin: 0;
+        padding: 0;
+        background-color: var(--background-color);
+        color: var(--text-color);
+        transition: background-color 0.3s, color 0.3s;
+    }
+
+    header {
+        background-color: #fff;
+        box-shadow: 0 1px 3px rgba(0,0,0,0.12);
+        padding: 10px 20px;
+        position: fixed;
+        top: 0;
+        left: 0;
+        right: 0;
+        z-index: 1000;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+    }
+
+    #logo {
+        font-size: 24px;
+        font-weight: bold;
+        color: var(--primary-color);
+        text-decoration: none;
+    }
+
+    #search-container {
+        flex-grow: 1;
+        margin: 0 20px;
+        position: relative;
+    }
+
+    #search-input {
+        width: 100%;
+        padding: 10px 40px 10px 10px;
+        border: 1px solid var(--border-color);
+        border-radius: 20px;
+        font-size: 16px;
+    }
+
+    #search-button {
+        position: absolute;
+        right: 5px;
+        top: 50%;
+        transform: translateY(-50%);
+        background: none;
+        border: none;
+        cursor: pointer;
+    }
+
+    #user-actions {
+        display: flex;
+        align-items: center;
+    }
+
+    .action-button {
+        background-color: var(--primary-color);
+        color: #fff;
+        border: none;
+        padding: 8px 16px;
+        border-radius: 4px;
+        cursor: pointer;
+        font-size: 14px;
+        margin-left: 10px;
+        transition: background-color 0.3s;
+    }
+
+    .action-button:hover {
+        background-color: #1565c0;
+    }
+
+    nav {
+        position: fixed;
+        top: 60px;
+        left: 0;
+        bottom: 0;
+        width: 240px;
+        background-color: #fff;
+        padding: 20px;
+        overflow-y: auto;
+        transition: transform 0.3s;
+    }
+
+    nav a {
+        display: block;
+        padding: 10px;
+        color: var(--text-color);
+        text-decoration: none;
+        transition: background-color 0.3s;
+    }
+
+    nav a:hover {
+        background-color: #f0f0f0;
+    }
+
+    main {
+        margin-left: 240px;
+        margin-top: 60px;
+        padding: 20px;
+    }
+
+    .video-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+        gap: 20px;
+    }
+
+    .video-card {
+        background-color: #fff;
+        border-radius: 8px;
+        overflow: hidden;
+        box-shadow: 0 1px 3px rgba(0,0,0,0.12);
+        transition: transform 0.3s, box-shadow 0.3s;
+    }
+
+    .video-card:hover {
+        transform: translateY(-5px);
+        box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+    }
+
+    .video-thumbnail {
+        width: 100%;
+        height: 0;
+        padding-bottom: 56.25%;
+        position: relative;
+        background-color: #f0f0f0;
+    }
+
+    .video-thumbnail img {
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+    }
+
+    .video-info {
+        padding: 10px;
+    }
+
+    .video-title {
+        font-weight: bold;
+        margin-bottom: 5px;
+    }
+
+    .video-channel {
+        font-size: 14px;
+        color: #606060;
+    }
+
+    .video-stats {
+        font-size: 12px;
+        color: #606060;
+        margin-top: 5px;
+    }
+
+    #upload-modal, #login-modal {
+        display: none;
+        position: fixed;
+        z-index: 2000;
+        left: 0;
+        top: 0;
+        width: 100%;
+        height: 100%;
+        background-color: rgba(0,0,0,0.5);
+    }
+
+    .modal-content {
+        background-color: #fff;
+        margin: 10% auto;
+        padding: 20px;
+        border-radius: 8px;
+        width: 80%;
+        max-width: 500px;
+    }
+
+    .close {
+        color: #aaa;
+        float: right;
+        font-size: 28px;
+        font-weight: bold;
+        cursor: pointer;
+    }
+
+    .close:hover {
+        color: #000;
+    }
+
+    #file-upload, #login-form {
+        margin-top: 20px;
+    }
+
+    #upload-progress {
+        margin-top: 20px;
+        height: 20px;
+        background-color: #f0f0f0;
+        border-radius: 10px;
+        overflow: hidden;
+    }
+
+    #progress-bar {
+        width: 0;
+        height: 100%;
+        background-color: var(--primary-color);
+        transition: width 0.3s;
+    }
+
+    @media (max-width: 768px) {
+        nav {
+            transform: translateX(-100%);
+        }
+
+        main {
+            margin-left: 0;
+        }
+
+        .show-nav nav {
+            transform: translateX(0);
+        }
+    }
+
+    #night-mode-toggle {
+        background: none;
+        border: none;
+        color: var(--text-color);
+        cursor: pointer;
+        font-size: 24px;
+        margin-left: 10px;
+    }
+
+    .night-mode {
+        --background-color: #202124;
+        --text-color: #fff;
+        --border-color: #5f6368;
+    }
+
+    .night-mode header, .night-mode nav, .night-mode .video-card, .night-mode .modal-content {
+        background-color: #2d2d2d;
+    }
+
+    .night-mode #search-input {
+        background-color: #3d3d3d;
+        color: #fff;
+    }
+
+    .night-mode nav a:hover {
+        background-color: #3d3d3d;
+    }
+
+    .night-mode .video-thumbnail {
+        background-color: #3d3d3d;
+    }
+
+    .night-mode .video-channel, .night-mode .video-stats {
+        color: #aaa;
+    }
+
+    #categories {
+        display: flex;
+        overflow-x: auto;
+        padding: 10px 0;
+        margin-bottom: 20px;
+    }
+
+    .category {
+        background-color: #f0f0f0;
+        color: var(--text-color);
+        padding: 8px 16px;
+        border-radius: 20px;
+        margin-right: 10px;
+        cursor: pointer;
+        white-space: nowrap;
+        transition: background-color 0.3s;
+    }
+
+    .category:hover, .category.active {
+        background-color: var(--primary-color);
+        color: #fff;
+    }
+
+    .night-mode .category {
+        background-color: #3d3d3d;
+    }
+
+    .night-mode .category:hover, .night-mode .category.active {
+        background-color: var(--primary-color);
+    }
+
+    .video-actions {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-top: 10px;
+    }
+
+    .like-dislike {
+        display: flex;
+        align-items: center;
+    }
+
+    .like-button, .dislike-button {
+        background: none;
+        border: none;
+        cursor: pointer;
+        font-size: 18px;
+        color: var(--text-color);
+        margin-right: 5px;
+    }
+
+    .share-button {
+        background: none;
+        border: none;
+        cursor: pointer;
+        font-size: 18px;
+        color: var(--text-color);
+    }
+
+    .premium-tag {
+        background-color: var(--secondary-color);
+        color: #fff;
+        padding: 2px 6px;
+        border-radius: 4px;
+        font-size: 12px;
+        position: absolute;
+        top: 5px;
+        right: 5px;
+    }
+
+    #monetization-info {
+        background-color: #fff;
+        border: 1px solid var(--border-color);
+        border-radius: 8px;
+        padding: 20px;
+        margin-top: 20px;
+    }
+
+    .night-mode #monetization-info {
+        background-color: #2d2d2d;
+    }
+
+    #monetization-info h3 {
+        margin-top: 0;
+    }
+
+    .monetization-option {
+        margin-bottom: 10px;
+    }
+
+    #comments-section {
+        margin-top: 30px;
+    }
+
+    .comment {
+        background-color: #fff;
+        border: 1px solid var(--border-color);
+        border-radius: 8px;
+        padding: 10px;
+        margin-bottom: 10px;
+    }
+
+    .night-mode .comment {
+        background-color: #2d2d2d;
+    }
+
+    .comment-author {
+        font-weight: bold;
+        margin-bottom: 5px;
+    }
+
+    .comment-text {
+        margin-bottom: 5px;
+    }
+
+    .comment-actions {
+        font-size: 12px;
+        color: #606060;
+    }
+
+    #comment-form {
+        margin-top: 20px;
+    }
+
+    #comment-input {
+        width: 100%;
+        padding: 10px;
+        border: 1px solid var(--border-color);
+        border-radius: 4px;
+        resize: vertical;
+    }
+
+    #submit-comment {
+        margin-top: 10px;
+    }
+</style></head><body>
+    <header>
+        <a href="https://websim.example.com/vidshare/" id="logo">VidShare</a>
+        <div id="search-container">
+            <input type="text" id="search-input" placeholder="Buscar videos...">
+            <button id="search-button">🔍</button>
+        </div>
+        <div id="user-actions">
+            <button class="action-button" id="upload-button">Subir video</button>
+            <button class="action-button" id="login-button">Iniciar sesión</button>
+            <button id="night-mode-toggle">🌙</button>
+        </div>
+    </header>
+
+    <nav>
+        <a href="https://websim.example.com/vidshare/home">Inicio</a>
+        <a href="https://websim.example.com/vidshare/trending">Tendencias</a>
+        <a href="https://websim.example.com/vidshare/subscriptions">Suscripciones</a>
+        <a href="https://websim.example.com/vidshare/library">Biblioteca</a>
+        <a href="https://websim.example.com/vidshare/history">Historial</a>
+        <a href="https://websim.example.com/vidshare/my-videos">Mis videos</a>
+        <a href="https://websim.example.com/vidshare/liked-videos">Videos que me gustan</a>
+        <a href="https://websim.example.com/vidshare/premium">VidShare Premium</a>
+    </nav>
+
+    <main>
+        <div id="categories">
+            <div class="category active">Todos</div>
+            <div class="category">Música</div>
+            <div class="category">Juegos</div>
+            <div class="category">Películas</div>
+            <div class="category">Noticias</div>
+            <div class="category">Deportes</div>
+            <div class="category">Educación</div>
+            <div class="category">Comedia</div>
+        </div>
+
+        <div class="video-grid">
+            <!-- Los videos se generarán dinámicamente con JavaScript -->
+        </div>
+
+        <div id="monetization-info">
+            <h3>Opciones de monetización para creadores</h3>
+            <div class="monetization-option">
+                <h4>Anuncios en videos</h4>
+                <p>Gana dinero mostrando anuncios antes y durante tus videos.</p>
+            </div>
+            <div class="monetization-option">
+                <h4>Suscripciones de canal</h4>
+                <p>Ofrece contenido exclusivo a tus suscriptores de pago.</p>
+            </div>
+            <div class="monetization-option">
+                <h4>Super Chat</h4>
+                <p>Recibe donaciones de tus fans durante transmisiones en vivo.</p>
+            </div>
+        </div>
+
+        <div id="comments-section">
+            <h3>Comentarios</h3>
+            <div id="comments-container">
+                <!-- Los comentarios se generarán dinámicamente con JavaScript -->
+            </div>
+            <form id="comment-form">
+                <textarea id="comment-input" placeholder="Añade un comentario..."></textarea>
+                <button type="submit" class="action-button" id="submit-comment">Comentar</button>
+            </form>
+        </div>
+    </main>
+
+    <div id="upload-modal">
+        <div class="modal-content">
+            <span class="close">&times;</span>
+            <h2>Subir video</h2>
+            <input type="file" id="file-upload" accept="video/*">
+            <div id="upload-progress">
+                <div id="progress-bar"></div>
+            </div>
+        </div>
+    </div>
+
+    <div id="login-modal">
+        <div class="modal-content">
+            <span class="close">&times;</span>
+            <h2>Iniciar sesión</h2>
+            <form id="login-form">
+                <input type="email" placeholder="Correo electrónico" required>
+                <input type="password" placeholder="Contraseña" required>
+                <button type="submit" class="action-button">Iniciar sesión</button>
+            </form>
+            <p>¿No tienes una cuenta? <a href="https://websim.example.com/vidshare/signup">Regístrate</a></p>
+        </div>
+    </div>
+
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    const nightModeToggle = document.getElementById('night-mode-toggle');
+    const body = document.body;
+    const uploadButton = document.getElementById('upload-button');
+    const uploadModal = document.getElementById('upload-modal');
+    const loginButton = document.getElementById('login-button');
+    const loginModal = document.getElementById('login-modal');
+    const closeButtons = document.querySelectorAll('.close');
+    const fileUpload = document.getElementById('file-upload');
+    const progressBar = document.getElementById('progress-bar');
+    const categories = document.querySelectorAll('.category');
+    const videoGrid = document.querySelector('.video-grid');
+    const commentForm = document.getElementById('comment-form');
+    const commentInput = document.getElementById('comment-input');
+    const commentsContainer = document.getElementById('comments-container');
+
+    // Cambiar entre modo día y noche
+    nightModeToggle.addEventListener('click', () => {
+        body.classList.toggle('night-mode');
+        nightModeToggle.textContent = body.classList.contains('night-mode') ? '☀️' : '🌙';
+    });
+
+    // Mostrar modal de subida de video
+    uploadButton.addEventListener('click', () => {
+        uploadModal.style.display = 'block';
+    });
+
+    // Mostrar modal de inicio de sesión
+    loginButton.addEventListener('click', () => {
+        loginModal.style.display = 'block';
+    });
+
+    // Cerrar modales
+    closeButtons.forEach(button => {
+        button.addEventListener('click', () => {
+            uploadModal.style.display = 'none';
+            loginModal.style.display = 'none';
+        });
+    });
+
+    // Simular subida de video
+    fileUpload.addEventListener('change', () => {
+        let progress = 0;
+        const interval = setInterval(() => {
+            progress += 10;
+            progressBar.style.width = `${progress}%`;
+            if (progress >= 100) {
+                clearInterval(interval);
+                setTimeout(() => {
+                    alert('Video subido con éxito!');
+                    uploadModal.style.display = 'none';
+                    progressBar.style.width = '0%';
+                }, 500);
+            }
+        }, 500);
+    });
+
+    // Cambiar categoría activa
+    categories.forEach(category => {
+        category.addEventListener('click', () => {
+            categories.forEach(c => c.classList.remove('active'));
+            category.classList.add('active');
+            // Aquí se podría añadir lógica para filtrar videos por categoría
+        });
+    });
+
+    // Generar videos de ejemplo
+    function generateVideos() {
+        const videoTitles = [
+            'Cómo hacer un pastel de chocolate',
+            'Tutorial de guitarra para principiantes',
+            'Los mejores destinos turísticos de 2023',
+            'Resumen del partido de fútbol',
+            'Noticias de última hora',
+            'Unboxing del nuevo smartphone',
+            'Crítica de la película del momento',
+            'Rutina de ejercicios en casa'
+        ];
+
+        videoGrid.innerHTML = '';
+
+        for (let i = 0; i < 12; i++) {
+            const videoCard = document.createElement('div');
+            videoCard.classList.add('video-card');
+
+            const videoThumbnail = document.createElement('div');
+            videoThumbnail.classList.add('video-thumbnail');
+            const img = document.createElement('img');
+            img.src = `https://picsum.photos/300/200?random=${i}`;
+            img.alt = 'Video thumbnail';
+            videoThumbnail.appendChild(img);
+
+            if (Math.random() > 0.7) {
+                const premiumTag = document.createElement('span');
+                premiumTag.classList.add('premium-tag');
+                premiumTag.textContent = 'PREMIUM';
+                videoThumbnail.appendChild(premiumTag);
+            }
+
+            const videoInfo = document.createElement('div');
+            videoInfo.classList.add('video-info');
+
+            const videoTitle = document.createElement('div');
+            videoTitle.classList.add('video-title');
+            videoTitle.textContent = videoTitles[i % videoTitles.length];
+
+            const videoChannel = document.createElement('div');
+            videoChannel.classList.add('video-channel');
+            videoChannel.textContent = `Canal ${i + 1}`;
+
+            const videoStats = document.createElement('div');
+            videoStats.classList.add('video-stats');
+            videoStats.textContent = `${Math.floor(Math.random() * 1000)}K vistas • hace ${Math.floor(Math.random() * 7) + 1} días`;
+
+            const videoActions = document.createElement('div');
+            videoActions.classList.add('video-actions');
+
+            const likeDislike = document.createElement('div');
+            likeDislike.classList.add('like-dislike');
+
+            const likeButton = document.createElement('button');
+            likeButton.classList.add('like-button');
+            likeButton.innerHTML = '👍';
+            const dislikeButton = document.createElement('button');
+            dislikeButton.classList.add('dislike-button');
+            dislikeButton.innerHTML = '👎';
+
+            likeDislike.appendChild(likeButton);
+            likeDislike.appendChild(dislikeButton);
+
+            const shareButton = document.createElement('button');
+            shareButton.classList.add('share-button');
+            shareButton.innerHTML = '🔗';
+
+            videoActions.appendChild(likeDislike);
+            videoActions.appendChild(shareButton);
+
+            videoInfo.appendChild(videoTitle);
+            videoInfo.appendChild(videoChannel);
+            videoInfo.appendChild(videoStats);
+            videoInfo.appendChild(videoActions);
+
+            videoCard.appendChild(videoThumbnail);
+            videoCard.appendChild(videoInfo);
+
+            videoGrid.appendChild(videoCard);
+        }
+    }
+
+    generateVideos();
+
+    // Simular envío de comentarios
+    commentForm.addEventListener('submit', (e) => {
+        e.preventDefault();
+        if (commentInput.value.trim() !== '') {
+            const comment = document.createElement('div');
+            comment.classList.add('comment');
+            
+            const commentAuthor = document.createElement('div');
+            commentAuthor.classList.add('comment-author');
+            commentAuthor.textContent = 'Usuario Anónimo';
+
+            const commentText = document.createElement('div');
+            commentText.classList.add('comment-text');
+            commentText.textContent = commentInput.value;
+
+            const commentActions = document.createElement('div');
+            commentActions.classList.add('comment-actions');
+            commentActions.textContent = 'Me gusta • Responder • hace un momento';
+
+            comment.appendChild(commentAuthor);
+            comment.appendChild(commentText);
+            comment.appendChild(commentActions);
+
+            commentsContainer.insertBefore(comment, commentsContainer.firstChild);
+            commentInput.value = '';
+        }
+    });
+
+    // Generar comentarios de ejemplo
+    function generateComments() {
+        const commentTexts = [
+            '¡Excelente video! Muy informativo.',
+            'No estoy de acuerdo con algunos puntos, pero respeto tu opinión.',
+            '¿Podrías hacer un video sobre...?',
+            'Me encantó la edición, ¿qué software usas?',
+            'Primer comentario 😎',
+            'Vine por la miniatura, me quedé por el contenido.',
+            '¡No puedo esperar para ver tu próximo video!',
+            'Esto merece más vistas, voy a compartirlo.'
+        ];
+
+        for (let i = 0; i < 5; i++) {
+            const comment = document.createElement('div');
+            comment.classList.add('comment');
+            
+            const commentAuthor = document.createElement('div');
+            commentAuthor.classList.add('comment-author');
+            commentAuthor.textContent = `Usuario ${i + 1}`;
+
+            const commentText = document.createElement('div');
+            commentText.classList.add('comment-text');
+            commentText.textContent = commentTexts[i % commentTexts.length];
+
+            const commentActions = document.createElement('div');
+            commentActions.classList.add('comment-actions');
+            commentActions.textContent = `${Math.floor(Math.random() * 100)} Me gusta • Responder • hace ${Math.floor(Math.random() * 24)} horas`;
+
+            comment.appendChild(commentAuthor);
+            comment.appendChild(commentText);
+            comment.appendChild(commentActions);
+
+            commentsContainer.appendChild(comment);
+        }
+    }
+
+    generateComments();
+});
+</script>
+</body></html>
